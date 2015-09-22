@@ -18,7 +18,7 @@ class App
       'FATAL'   => :red,
       'UNKNOWN' => :red
     }
-    
+
     def initialize(*args)
       super
       self.formatter = self.method(:custom_formatter)
@@ -136,6 +136,7 @@ class App
           innodb_data_file_path = ibdata1:10M:autoextend
           innodb_file_per_table = OFF
           ft_min_word_len = 3
+          default_time_zone='+00:00'
         }.gsub(/^\s+/,'')
         if @log
           fd.write %Q{
@@ -225,7 +226,7 @@ class App
     @options = OpenStruct.new(:verbose => false, :size => 1024, :log => false, :port => 0)
     option_parser.parse(argv)
 
-    Logger.level = options.verbose ? 
+    Logger.level = options.verbose ?
       ColorLogger::DEBUG :
       ColorLogger::INFO
   end
@@ -253,7 +254,7 @@ class App
     wait_forever
   rescue Interrupt
     # Kernel.exit
-    Logger.debug 'Waiting for child to complete...'    
+    Logger.debug 'Waiting for child to complete...'
     @pipe.gets
   end
 
@@ -261,7 +262,7 @@ class App
   # Logger.info 'in child'
     @ramdisk.mount
     @server.start
-    Signal.trap("HUP") do 
+    Signal.trap("HUP") do
       Logger.warn "SIGHUP received"
       cleanup
     end
@@ -288,7 +289,7 @@ class App
   def cleanup
     @server.stop     if @server
     @ramdisk.unmount if @ramdisk
-  end    
+  end
 
 
   def option_parser
@@ -311,7 +312,7 @@ class App
         options.port = v
       end
     end
-  end 
+  end
 
   def wait_forever
     Kernel.sleep
